@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -17,46 +11,51 @@ datasource db {
 model User {
   id        Int      @id @default(autoincrement())
   password  String
-  doctorId  Int? @unique
-  doctor    Doctor?  @relation(fields: [doctorId], references: [id])
-  patientId Int? @unique
-  patient   Patient? @relation(fields: [patientId], references: [id])
+  email     String   @unique
+  doctor Doctor?
+  patient Patient?
+
   @@map("Users")
 }
 
 model Patient {
-  id          Int          @id @default(autoincrement())
+  id          Int           @id @default(autoincrement())
   firstname   String?
   lastname    String?
   gender      String
   dateOfBirth DateTime?
   address     String?
-  phone       String       @unique
-  appoinments Appointment[]
-  parentId     Int?  
-  parent       Patient?   @relation("Family", fields: [parentId], references: [id])
-  children     Patient[]  @relation("Family")
-  createdAt   DateTime     @default(now())
+  phone       String        @unique
+  parentId    Int?
+  createdAt   DateTime      @default(now())
   updatedAt   DateTime?
-  user        User?
+  appoinments Appointment[]
+  parent      Patient?      @relation("Family", fields: [parentId], references: [id])
+  children    Patient[]     @relation("Family")
+  user        User?   @relation(fields: [userId], references: [id])
+  userId Int? @unique
+
   @@map("Patients")
 }
 
 model Doctor {
-  id          Int          @id @default(autoincrement())
+  id          Int           @id @default(autoincrement())
   firstname   String
   lastname    String?
-  phone       String       @unique
-  phone2      String?      @unique
+  phone       String?        
+  gender      String
+  phone2      String?       
   role        String?
-  appoinments Appointment[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime?
-  user        User?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime? 
+  appointments Appointment[]
+  user   User?   @relation(fields: [userId], references: [id])
+  userId Int? @unique
+
   @@map("Doctors")
 }
 
-model Appointment  {
+model Appointment {
   id          Int       @id @default(autoincrement())
   title       String
   description String?
@@ -64,11 +63,12 @@ model Appointment  {
   EndDate     DateTime?
   status      String?
   verified    Boolean?
-  patient     Patient?  @relation(fields: [patientId], references: [id])
   patientId   Int?
-  doctor      Doctor?   @relation(fields: [doctorId], references: [id])
   doctorId    Int?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime?
+  doctor      Doctor?   @relation(fields: [doctorId], references: [id])
+  patient     Patient?  @relation(fields: [patientId], references: [id])
+
   @@map("Appointments")
 }
