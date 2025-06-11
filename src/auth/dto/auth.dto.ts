@@ -39,7 +39,7 @@ export class AuthDto {
 
   @IsString()
   @IsOptional()
-  role: string;
+  domain: string;
 
   @IsString()
   @IsOptional()

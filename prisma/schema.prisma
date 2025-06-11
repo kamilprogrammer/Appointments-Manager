@@ -14,6 +14,8 @@ model User {
   email     String   @unique
   doctor Doctor?
   patient Patient?
+  createdAt DateTime @default(now())
+  updatedAt DateTime? @updatedAt
 
   @@map("Users")
 }
@@ -28,7 +30,7 @@ model Patient {
   phone       String        @unique
   parentId    Int?
   createdAt   DateTime      @default(now())
-  updatedAt   DateTime?
+  updatedAt   DateTime? @updatedAt
   appoinments Appointment[]
   parent      Patient?      @relation("Family", fields: [parentId], references: [id], onDelete: SetNull)
   children    Patient[]     @relation("Family")
@@ -44,10 +46,12 @@ model Doctor {
   lastname    String?
   phone       String?        
   gender      String
+  address String?
+  dateofBirth DateTime?
   phone2      String?       
-  role        String?
+  domain String?
   createdAt   DateTime      @default(now())
-  updatedAt   DateTime? 
+  updatedAt   DateTime? @updatedAt
   appointments Appointment[]
   user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
   userId Int? @unique
@@ -60,13 +64,13 @@ model Appointment {
   title       String
   description String?
   date        DateTime?
-  EndDate     DateTime?
+  endDate     DateTime?
   status      String?
   verified    Boolean?
   patientId   Int?
   doctorId    Int?
   createdAt   DateTime  @default(now())
-  updatedAt   DateTime?
+  updatedAt   DateTime? @updatedAt
   doctor      Doctor?   @relation(fields: [doctorId], references: [id], onDelete: SetNull)
   patient     Patient?  @relation(fields: [patientId], references: [id], onDelete: SetNull)
 
