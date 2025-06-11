@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { AuthDto } from './dto';
 import * as argon from 'argon2';
@@ -24,6 +22,7 @@ export class AuthService {
     try {
       // Creating the User in users table
       const hash = (await argon.hash(dto.password)).toString();
+
       const user = await this.prisma.user.create({
         data: { email: dto.email, password: hash },
         select: { id: true, email: true },
@@ -36,7 +35,7 @@ export class AuthService {
             lastname: dto.lastname,
             phone: dto.phone,
             phone2: dto.phone2,
-            role: dto.role,
+            domain: dto.domain,
             gender: dto.gender,
             userId: user.id,
           },
