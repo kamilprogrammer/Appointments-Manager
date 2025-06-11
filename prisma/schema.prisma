@@ -66,6 +66,7 @@ model Appointment {
   date        DateTime?
   endDate     DateTime?
   status      String?
+  note String?
   verified    Boolean?
   patientId   Int?
   doctorId    Int?
