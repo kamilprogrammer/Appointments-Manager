@@ -77,4 +77,15 @@ model Appointment {
 
   @@map("Appointments")
 }
-  
+
+model AuditLog {
+  id          Int      @id @default(autoincrement())
+  entity      String   
+  entityId    Int      
+  action      String   
+  changes     Json?    
+  userId Int     
+  timestamp   DateTime @default(now())
+
+  @@map("Logs")
+}

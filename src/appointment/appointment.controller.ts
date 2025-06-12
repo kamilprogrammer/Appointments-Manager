@@ -50,15 +50,18 @@ export class AppointmentController {
   }
 
   @Get(':id')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), AdminGuard)
   GetAppointment(@Param('id') appointmentId: number) {
     return this.AppointmentService.GetAppointment(appointmentId);
   }
 
   @Patch('/verify/:id')
   @UseGuards(AuthGuard('jwt'), AdminGuard)
-  VerifyAppointment(@Param('id') appointmentId: number) {
-    return this.AppointmentService.VerifyAppointment(appointmentId);
+  VerifyAppointment(
+    @Param('id') appointmentId: number,
+    @GetUser('id') userId: number,
+  ) {
+    return this.AppointmentService.VerifyAppointment(appointmentId, userId);
   }
 
   @Patch('/reschedule/:id')
@@ -67,11 +70,13 @@ export class AppointmentController {
     @Param('id') appointmentId: number,
     @Body('date') date: Date,
     @Body('endDate') endDate: Date,
+    @GetUser('id') userId: number,
   ) {
     return this.AppointmentService.RescheduleAppointment(
       appointmentId,
       date,
       endDate,
+      userId,
     );
   }
 
@@ -80,20 +85,27 @@ export class AppointmentController {
   EditAppointment(
     @Body() dto: EditAppointmentDto,
     @Param('id') appointmentId: number,
+    @GetUser('id') userId: number,
   ) {
-    return this.AppointmentService.EditAppointment(appointmentId, dto);
+    return this.AppointmentService.EditAppointment(appointmentId, dto, userId);
   }
 
   @Post('/add')
   @UseGuards(AuthGuard('jwt'), AdminGuard)
-  AddAppointment(@Body() dto: CreateAppointmentDto) {
-    return this.AppointmentService.AddAppointment(dto);
+  AddAppointment(
+    @Body() dto: CreateAppointmentDto,
+    @GetUser('id') userId: number,
+  ) {
+    return this.AppointmentService.AddAppointment(dto, userId);
   }
 
   @Delete('/:id')
   @HttpCode(204)
   @UseGuards(AuthGuard('jwt'), AdminGuard)
-  DeleteAppointment(@Param('id') appointmentId: number) {
-    return this.AppointmentService.DeleteAppintment(appointmentId);
+  DeleteAppointment(
+    @Param('id') appointmentId: number,
+    @GetUser('id') userId: number,
+  ) {
+    return this.AppointmentService.DeleteAppintment(appointmentId, userId);
   }
 }
