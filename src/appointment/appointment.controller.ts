@@ -6,7 +6,6 @@ import {
   Post,
   Patch,
   Param,
-  Put,
   Delete,
   HttpCode,
 } from '@nestjs/common';
@@ -76,7 +75,7 @@ export class AppointmentController {
     );
   }
 
-  @Put(':id')
+  @Patch(':id')
   @UseGuards(AuthGuard('jwt'), IsAppointmentOwnerGuard)
   EditAppointment(
     @Body() dto: EditAppointmentDto,

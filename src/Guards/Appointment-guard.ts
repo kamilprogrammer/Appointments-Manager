@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Request } from 'express';
+import { AdminGuard } from './Admin-guard';
 
 @Injectable()
 export class IsAppointmentOwnerGuard implements CanActivate {
@@ -29,7 +30,7 @@ export class IsAppointmentOwnerGuard implements CanActivate {
       throw new ForbiddenException('Appointment not found');
     }
 
-    const isDoctor = user?.doctor?.id === appointment.doctorId;
+    const isDoctor = user?.doctor?.id === appointment.doctorId || AdminGuard;
 
     if (!isDoctor) {
       throw new ForbiddenException(
