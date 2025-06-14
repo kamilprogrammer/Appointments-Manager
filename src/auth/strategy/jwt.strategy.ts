@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
@@ -12,13 +13,12 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     private prisma: PrismaService,
   ) {
     super({
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       secretOrKey: config.get('SECRET_CODE'),
     } as any);
   }
-  async validate(payload: { sub: number; username: string }) {
+  async validate(payload: any) {
     const user = await this.prisma.user.findUnique({
       where: { id: payload.sub },
       include: {
@@ -26,6 +26,22 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
         patient: true,
       },
     });
+
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+    if (user?.passwordChangedAt && user?.passwordChangedAt !== null) {
+      const passwordChangedAt = Math.floor(
+        user.passwordChangedAt.getTime() / 1000,
+      );
+      console.log(passwordChangedAt);
+      console.log(payload.iat);
+      if (payload.iat < passwordChangedAt) {
+        throw new UnauthorizedException(
+          'Token invalid due to password change. Please login again.',
+        );
+      }
+    }
     return user;
   }
 }
