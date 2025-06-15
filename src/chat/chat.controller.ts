@@ -34,6 +34,8 @@ export class chatController {
     console.log('getting chat');
     return this.chatService.getChat(userId, chatId);
   }
+
+  // This Endpoint is for deleting a *message*
   @HttpCode(204)
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
