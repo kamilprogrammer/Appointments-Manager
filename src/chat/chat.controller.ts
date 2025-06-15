@@ -1,4 +1,13 @@
-import { Controller, UseGuards, Post, Body, Get, Param } from '@nestjs/common';
+import {
+  Controller,
+  UseGuards,
+  Post,
+  Body,
+  Get,
+  Param,
+  Delete,
+  HttpCode,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateChatDto } from './dto';
 import { ChatService } from './chat.service';
@@ -24,5 +33,11 @@ export class chatController {
   async getChat(@GetUser('id') userId: number, @Param('id') chatId: number) {
     console.log('getting chat');
     return this.chatService.getChat(userId, chatId);
+  }
+  @HttpCode(204)
+  @Delete(':id')
+  @UseGuards(AuthGuard('jwt'))
+  async deleteMsg(@GetUser('id') userId: number, @Param('id') msgId: number) {
+    return this.chatService.deleteMsg(userId, msgId);
   }
 }

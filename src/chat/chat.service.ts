@@ -101,4 +101,7 @@ export class ChatService {
       });
     }
   }
+  async deleteMsg(userId: number, msgId: number) {
+    await this.prisma.message.delete({ where: { id: msgId } });
+  }
 }
