@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UserController } from './user/user.controller';
 import { UserService } from './user/user.service';
 import { AuditLogService } from './audit-log/audit-log.service';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { AuditLogService } from './audit-log/audit-log.service';
     PatientModule,
     DoctorModule,
     PrismaModule,
+    ChatModule,
   ],
   controllers: [UserController],
   providers: [UserService, AuditLogService],

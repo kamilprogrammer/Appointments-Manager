@@ -19,6 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     } as any);
   }
   async validate(payload: any) {
+    console.log('here');
     const user = await this.prisma.user.findUnique({
       where: { id: payload.sub },
       include: {
@@ -34,8 +35,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       const passwordChangedAt = Math.floor(
         user.passwordChangedAt.getTime() / 1000,
       );
-      console.log(passwordChangedAt);
-      console.log(payload.iat);
       if (payload.iat < passwordChangedAt) {
         throw new UnauthorizedException(
           'Token invalid due to password change. Please login again.',
