@@ -56,6 +56,10 @@ export class ChatService {
       const chat = await this.prisma.chat.findUnique({
         where: { id: chatId },
         include: { messages: true },
+        omit: {
+          createdAt: true,
+          updatedAt: true,
+        },
       });
 
       const person = await this.prisma.user.findUnique({
@@ -68,7 +72,8 @@ export class ChatService {
         (chat.doctorId == person?.doctor?.id ||
           chat?.patientId == person?.patient?.id)
       ) {
-        return chat.messages;
+        console.log(chat);
+        return chat;
       } else {
         throw new ForbiddenException(
           'You are not Authorized to get this chat.',
@@ -77,6 +82,23 @@ export class ChatService {
     } catch (err) {
       console.log(err);
       throw new ForbiddenException('You are not Authorized to get this chat.');
+    }
+  }
+  async getChatsRelated(userId: number) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: { doctor: true, patient: true },
+    });
+    if (user?.doctor) {
+      return await this.prisma.chat.findMany({
+        where: { doctorId: user?.doctor.id },
+        orderBy: { updatedAt: 'desc' },
+      });
+    }
+    if (user?.patient) {
+      return await this.prisma.chat.findMany({
+        where: { patientId: user?.patient.id },
+      });
     }
   }
 }
