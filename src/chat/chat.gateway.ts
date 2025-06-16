@@ -17,7 +17,7 @@ import { Server } from 'socket.io';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ChatService } from './chat.service';
 
-@WebSocketGateway(80, { cors: { origin: '*' } })
+@WebSocketGateway(3000, { cors: { origin: '*' } })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;

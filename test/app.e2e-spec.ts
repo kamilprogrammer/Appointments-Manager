@@ -1,25 +1,45 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
-import { App } from 'supertest/types';
-import { AppModule } from './../src/app.module';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
+import { AppModule } from '../src/app.module';
+import * as pactum from 'pactum';
+import { AuthDto } from '../src/auth/dto';
 
-describe('AppController (e2e)', () => {
-  let app: INestApplication<App>;
-
-  beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
+describe('App (e2e)', () => {
+  let app: INestApplication;
+  beforeAll(async () => {
+    const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
-
-    app = moduleFixture.createNestApplication();
-    await app.init();
+    app = moduleRef.createNestApplication();
+    app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+    await app.listen(0);
+  });
+  afterAll(() => {
+    app.close();
+  });
+  describe('Auth', () => {
+    describe('SignUp', () => {
+      it('Should SignUp', () => {
+        const dto: AuthDto = {
+          email: 'kamilref00123@gmail.com',
+          password: 'kmr123123',
+          phone: '45135454',
+          phone2: '451335454',
+          doctor: true,
+          patient: false,
+          domain: 'Surgery Operator',
+          firstname: 'Kamel',
+          lastname: 'Rifai',
+          gender: 'M',
+        };
+        return pactum
+          .spec()
+          .post('http://localhost:3333/auth/SignUp')
+          .withBody(dto)
+          .expectStatus(201);
+      });
+    });
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
-  });
+  it.todo('Should Pass!');
 });

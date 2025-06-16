@@ -5,9 +5,9 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreateAppointmentDto, EditAppointmentDto } from './dto';
-import { PrismaClientKnownRequestError } from 'generated/prisma/runtime/library';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { formatUTCToLocal } from './LocalDate';
 import { AuditLogService } from 'src/audit-log/audit-log.service';
 @Injectable()
